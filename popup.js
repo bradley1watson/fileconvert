@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handle Convert Button Click
     convertButton.addEventListener("click", async function (event) {
         event.preventDefault();
-        
+
         // Get the selected file
         const file = fileInput.files[0];
         if (!file) {
@@ -51,45 +51,55 @@ document.addEventListener("DOMContentLoaded", function () {
         // Show loading spinner
         loadingSpinner.style.display = "block";
 
-        // HEIC File Handling
-        if (file.type === "image/heic" || format === "heic") {
-            try {
-                const convertedBlob = await heic2any({ blob: file, toType: "image/png" });
+        try {
+            let convertedBlob;
+
+            // Handle HEIC File Conversion
+            if (file.type === "image/heic" || format === "heic") {
+                convertedBlob = await heic2any({
+                    blob: file,
+                    toType: "image/png"
+                });
+
+                if (!convertedBlob) {
+                    throw new Error("HEIC conversion failed.");
+                }
+
                 createDownloadLink(convertedBlob, "png"); // Convert HEIC to PNG
                 return; // Stop further execution
-            } catch (error) {
-                alert("Failed to convert HEIC file.");
-                loadingSpinner.style.display = "none";
-                return;
             }
-        }
 
-        // Read the file
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            const img = new Image();
-            img.src = event.target.result;
+            // Read the file
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const img = new Image();
+                img.src = event.target.result;
 
-            img.onload = function () {
-                // Create a canvas to draw the image
-                const canvas = document.createElement("canvas");
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0);
+                img.onload = function () {
+                    // Create a canvas to draw the image
+                    const canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
 
-                // Convert the canvas to the selected format
-                canvas.toBlob(
-                    (blob) => {
-                        createDownloadLink(blob, format);
-                    },
-                    `image/${format}`,
-                    quality
-                );
+                    // Convert the canvas to the selected format
+                    canvas.toBlob(
+                        (blob) => {
+                            createDownloadLink(blob, format);
+                        },
+                        `image/${format}`,
+                        quality
+                    );
+                };
             };
-        };
 
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
+        } catch (error) {
+            alert("Error converting file: " + error.message);
+            console.error(error);
+            loadingSpinner.style.display = "none";
+        }
     });
 
     // Function to create and trigger download
@@ -99,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
         downloadLink.download = `converted.${format}`;
         downloadLink.style.display = "block";
         downloadLink.innerText = "Download Converted Image";
-        
+
         // Auto-download the file
         downloadLink.click();
 
