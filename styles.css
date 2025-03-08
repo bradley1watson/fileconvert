@@ -4,13 +4,6 @@ body {
     padding: 10px;
   }
   
-  .container {
-    border-radius: 12px;
-    background: white;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
   button {
     display: block;
     margin-top: 10px;
