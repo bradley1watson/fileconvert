@@ -2,6 +2,7 @@ body {
     font-family: Arial, sans-serif;
     width: 250px;
     padding: 10px;
+    border-radius: 10px;
   }
   
   button {
