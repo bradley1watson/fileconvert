@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>File Convert</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h2>File Convert</h2>
+  <input type="file" id="fileInput" accept="image/*">
+  <label for="format">Convert to:</label>
+  <select id="format">
+    <option value="jpeg">JPEG</option>
+    <option value="png">PNG</option>
+    <option value="webp">WEBP</option>
+  </select>
+  <button id="convert">Convert</button>
+  <a id="download" style="display:none">Download Image</a>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, sans-serif;
+    width: 250px;
+    padding: 10px;
+  }
+  
+  button {
+    display: block;
+    margin-top: 10px;
+    padding: 5px;
+  }
+  
+  #download {
+    margin-top: 10px;
+    display: block;
+  }
+  
