@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Handle Convert Button Click
-    convertButton.addEventListener("click", function (event) {
+    convertButton.addEventListener("click", async function (event) {
         event.preventDefault();
         
         // Get the selected file
@@ -51,14 +51,17 @@ document.addEventListener("DOMContentLoaded", function () {
         // Show loading spinner
         loadingSpinner.style.display = "block";
 
-        // Check if the file is HEIC and convert it using heic2any
+        // HEIC File Handling
         if (file.type === "image/heic" || format === "heic") {
-            heic2any({ blob: file, toType: "image/png" })
-                .then((convertedBlob) => {
-                    createDownloadLink(convertedBlob, "png");
-                })
-                .catch(() => alert("Failed to convert HEIC file."));
-            return;
+            try {
+                const convertedBlob = await heic2any({ blob: file, toType: "image/png" });
+                createDownloadLink(convertedBlob, "png"); // Convert HEIC to PNG
+                return; // Stop further execution
+            } catch (error) {
+                alert("Failed to convert HEIC file.");
+                loadingSpinner.style.display = "none";
+                return;
+            }
         }
 
         // Read the file
