@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
     formatSelect.addEventListener("change", () => localStorage.setItem("format", formatSelect.value));
     qualityInput.addEventListener("input", () => localStorage.setItem("quality", qualityInput.value));
 
+    // Set up HEIC Web Worker
+    const heicWorker = new Worker("heic-worker.js");
+
     // Drag & Drop Support
     dropZone.addEventListener("dragover", (event) => {
         event.preventDefault();
@@ -34,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Handle Convert Button Click
-    convertButton.addEventListener("click", async function (event) {
+    convertButton.addEventListener("click", function (event) {
         event.preventDefault();
 
         // Get the selected file
@@ -51,55 +54,49 @@ document.addEventListener("DOMContentLoaded", function () {
         // Show loading spinner
         loadingSpinner.style.display = "block";
 
-        try {
-            let convertedBlob;
+        // Handle HEIC File Conversion
+        if (file.type === "image/heic" || file.name.endsWith(".heic")) {
+            heicWorker.postMessage(file);
 
-            // Handle HEIC File Conversion
-            if (file.type === "image/heic" || format === "heic") {
-                convertedBlob = await heic2any({
-                    blob: file,
-                    toType: "image/png"
-                });
-
-                if (!convertedBlob) {
-                    throw new Error("HEIC conversion failed.");
+            heicWorker.onmessage = function (e) {
+                if (e.data.error) {
+                    alert("HEIC conversion failed: " + e.data.error);
+                    loadingSpinner.style.display = "none";
+                    return;
                 }
 
-                createDownloadLink(convertedBlob, "png"); // Convert HEIC to PNG
-                return; // Stop further execution
-            }
-
-            // Read the file
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const img = new Image();
-                img.src = event.target.result;
-
-                img.onload = function () {
-                    // Create a canvas to draw the image
-                    const canvas = document.createElement("canvas");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0);
-
-                    // Convert the canvas to the selected format
-                    canvas.toBlob(
-                        (blob) => {
-                            createDownloadLink(blob, format);
-                        },
-                        `image/${format}`,
-                        quality
-                    );
-                };
+                createDownloadLink(e.data, "png");
             };
 
-            reader.readAsDataURL(file);
-        } catch (error) {
-            alert("Error converting file: " + error.message);
-            console.error(error);
-            loadingSpinner.style.display = "none";
+            return; // Stop further execution after sending file to worker
         }
+
+        // Read the file
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const img = new Image();
+            img.src = event.target.result;
+
+            img.onload = function () {
+                // Create a canvas to draw the image
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+
+                // Convert the canvas to the selected format
+                canvas.toBlob(
+                    (blob) => {
+                        createDownloadLink(blob, format);
+                    },
+                    `image/${format}`,
+                    quality
+                );
+            };
+        };
+
+        reader.readAsDataURL(file);
     });
 
     // Function to create and trigger download
