@@ -49,3 +49,23 @@ right: 0;
   margin-top: 10px;
   display: block;
 }
+
+#drop-zone {
+  border: 2px dashed #1b75bc;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+#drop-zone:hover {
+  background-color: #f0f0f0;
+}
+
+#loading-spinner {
+  font-size: 14px;
+  color: #1b75bc;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}

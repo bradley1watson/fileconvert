@@ -3,12 +3,40 @@ document.addEventListener("DOMContentLoaded", function () {
     const convertButton = document.getElementById("convert");
     const fileInput = document.getElementById("fileInput");
     const formatSelect = document.getElementById("format");
+    const qualityInput = document.getElementById("quality");
     const downloadLink = document.getElementById("download");
+    const dropZone = document.getElementById("drop-zone");
+    const loadingSpinner = document.getElementById("loading-spinner");
 
-    // Add event listener to the button
+    // Load saved user preferences
+    formatSelect.value = localStorage.getItem("format") || "png";
+    qualityInput.value = localStorage.getItem("quality") || "1";
+
+    // Save user preferences when changed
+    formatSelect.addEventListener("change", () => localStorage.setItem("format", formatSelect.value));
+    qualityInput.addEventListener("input", () => localStorage.setItem("quality", qualityInput.value));
+
+    // Drag & Drop Support
+    dropZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        dropZone.style.backgroundColor = "#eee"; // Highlight drop area
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+        dropZone.style.backgroundColor = "white";
+    });
+
+    dropZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        dropZone.style.backgroundColor = "white";
+        const file = event.dataTransfer.files[0];
+        fileInput.files = event.dataTransfer.files; // Assign to file input
+    });
+
+    // Handle Convert Button Click
     convertButton.addEventListener("click", function (event) {
-        event.preventDefault(); // Prevents any unwanted behavior
-
+        event.preventDefault();
+        
         // Get the selected file
         const file = fileInput.files[0];
         if (!file) {
@@ -16,8 +44,22 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Get the selected format
+        // Get the selected format and quality
         const format = formatSelect.value;
+        const quality = parseFloat(qualityInput.value);
+
+        // Show loading spinner
+        loadingSpinner.style.display = "block";
+
+        // Check if the file is HEIC and convert it using heic2any
+        if (file.type === "image/heic" || format === "heic") {
+            heic2any({ blob: file, toType: "image/png" })
+                .then((convertedBlob) => {
+                    createDownloadLink(convertedBlob, "png");
+                })
+                .catch(() => alert("Failed to convert HEIC file."));
+            return;
+        }
 
         // Read the file
         const reader = new FileReader();
@@ -33,20 +75,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0);
 
-                // Convert and create a downloadable file
+                // Convert the canvas to the selected format
                 canvas.toBlob(
                     (blob) => {
-                        const url = URL.createObjectURL(blob);
-                        downloadLink.href = url;
-                        downloadLink.download = `converted.${format}`;
-                        downloadLink.style.display = "block";
-                        downloadLink.innerText = "Download Converted Image";
+                        createDownloadLink(blob, format);
                     },
-                    `image/${format}`
+                    `image/${format}`,
+                    quality
                 );
             };
         };
 
         reader.readAsDataURL(file);
     });
+
+    // Function to create and trigger download
+    function createDownloadLink(blob, format) {
+        const url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.download = `converted.${format}`;
+        downloadLink.style.display = "block";
+        downloadLink.innerText = "Download Converted Image";
+        
+        // Auto-download the file
+        downloadLink.click();
+
+        // Hide loading spinner
+        loadingSpinner.style.display = "none";
+    }
 });
