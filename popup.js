@@ -13,8 +13,13 @@ document.addEventListener("DOMContentLoaded", function () {
     qualityInput.value = localStorage.getItem("quality") || "1";
 
     // Save user preferences when changed
-    formatSelect.addEventListener("change", () => localStorage.setItem("format", formatSelect.value));
-    qualityInput.addEventListener("input", () => localStorage.setItem("quality", qualityInput.value));
+    formatSelect.addEventListener("change", () => {
+        localStorage.setItem("format", formatSelect.value);
+    });
+
+    qualityInput.addEventListener("input", () => {
+        localStorage.setItem("quality", qualityInput.value);
+    });
 
     // Drag & Drop Support
     dropZone.addEventListener("dragover", (event) => {
@@ -32,18 +37,19 @@ document.addEventListener("DOMContentLoaded", function () {
         fileInput.files = event.dataTransfer.files; // Assign to file input
     });
 
-    //on click of dropzone, trigger file input click
-    dropZone.addEventListener("click", () => fileInput.click()); {
-        const file = fileInput.files[0];
-        if (!file) {
-            alert("Please select a file.");
-            return;
-        }
-    }
+    // On click of drop zone, trigger file input click
+    dropZone.addEventListener("click", () => {
+        fileInput.click();
+    });
 
     // Handle Convert Button Click
     convertButton.addEventListener("click", function (event) {
         event.preventDefault();
+
+        // Ensure the event is triggered by a user action
+        if (!event.isTrusted) {
+            return; // Ignore programmatic or unintended triggers
+        }
 
         // Get the selected file
         const file = fileInput.files[0];
@@ -58,23 +64,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Show loading spinner
         loadingSpinner.style.display = "block";
-
-        // Handle HEIC File Conversion
-        if (file.type === "image/heic" || file.name.endsWith(".heic")) {
-            heicWorker.postMessage(file);
-
-            heicWorker.onmessage = function (e) {
-                if (e.data.error) {
-                    alert("HEIC conversion failed: " + e.data.error);
-                    loadingSpinner.style.display = "none";
-                    return;
-                }
-
-                createDownloadLink(e.data, "png");
-            };
-
-            return; // Stop further execution after sending file to worker
-        }
 
         // Read the file
         const reader = new FileReader();
