@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
     dropZone.addEventListener("drop", (event) => {
         event.preventDefault();
         dropZone.style.backgroundColor = "white";
-        const file = event.dataTransfer.files[0];
         fileInput.files = event.dataTransfer.files; // Assign to file input
     });
 
