@@ -16,9 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
     formatSelect.addEventListener("change", () => localStorage.setItem("format", formatSelect.value));
     qualityInput.addEventListener("input", () => localStorage.setItem("quality", qualityInput.value));
 
-    // Set up HEIC Web Worker
-    const heicWorker = new Worker("heic-worker.js");
-
     // Drag & Drop Support
     dropZone.addEventListener("dragover", (event) => {
         event.preventDefault();
@@ -36,6 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
         fileInput.files = event.dataTransfer.files; // Assign to file input
     });
 
+    //on click of dropzone, trigger file input click
+    dropZone.addEventListener("click", () => fileInput.click()); {
+        const file = fileInput.files[0];
+        if (!file) {
+            alert("Please select a file.");
+            return;
+        }
+    }
+
     // Handle Convert Button Click
     convertButton.addEventListener("click", function (event) {
         event.preventDefault();
@@ -43,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Get the selected file
         const file = fileInput.files[0];
         if (!file) {
-            alert("Please select an image.");
+            alert("Please select a file.");
             return;
         }
 
