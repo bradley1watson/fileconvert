@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Convert the canvas to the selected format
                 canvas.toBlob(
                     (blob) => {
-                        createDownloadLink(blob, format);
+                        createDownloadLink(blob, format, file.name);
                     },
                     `image/${format}`
                 );
@@ -116,10 +116,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Function to create and trigger download
-    function createDownloadLink(blob, format) {
+    function createDownloadLink(blob, format, fileName) {
         const url = URL.createObjectURL(blob);
         downloadLink.href = url;
-        downloadLink.download = `${file.name}.${format}`;
+        downloadLink.download = `${fileName}.${format}`;
         downloadLink.style.display = "block";
         downloadLink.innerText = "Download Converted Image";
 
