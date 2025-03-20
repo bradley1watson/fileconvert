@@ -28,12 +28,37 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     dropZone.addEventListener("dragleave", handleDragLeave);
 
+    // Add this function to format file size
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Update the handleDrop function
     function handleDrop(event) {
         event.preventDefault();
         dropZone.style.backgroundColor = "white";
-        fileInput.files = event.dataTransfer.files; // Assign to file input
+        fileInput.files = event.dataTransfer.files;
+        updateDropZoneText(fileInput.files[0]);
     }
-    dropZone.addEventListener("drop", handleDrop);
+
+    // Add new function to update drop zone text
+    function updateDropZoneText(file) {
+        if (file) {
+            const fileSize = formatFileSize(file.size);
+            dropZone.innerHTML = `Selected: ${file.name}<br>Size: ${fileSize}`;
+        } else {
+            dropZone.innerHTML = "Click or drag & image here";
+        }
+    }
+
+    // Update file input change handler
+    fileInput.addEventListener('change', function() {
+        updateDropZoneText(this.files[0]);
+    });
 
     // On click of drop zone, trigger file input click
     function handleDropZoneClick() {
