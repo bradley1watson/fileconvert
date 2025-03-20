@@ -10,15 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load saved user preferences
     formatSelect.value = localStorage.getItem("format") || "png";
-    qualityInput.value = localStorage.getItem("quality") || "1";
 
     // Save user preferences when changed
     formatSelect.addEventListener("change", () => {
         localStorage.setItem("format", formatSelect.value);
-    });
-
-    qualityInput.addEventListener("input", () => {
-        localStorage.setItem("quality", qualityInput.value);
     });
 
     // Drag & Drop Support
