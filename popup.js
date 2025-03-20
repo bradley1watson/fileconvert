@@ -123,9 +123,6 @@ document.addEventListener("DOMContentLoaded", function () {
         downloadLink.style.display = "block";
         downloadLink.innerText = "Download Converted Image";
 
-        // Auto-download the file
-        downloadLink.click();
-
         // Hide loading spinner
         loadingSpinner.style.display = "none";
     }
