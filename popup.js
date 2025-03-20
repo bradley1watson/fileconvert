@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function createDownloadLink(blob, format) {
         const url = URL.createObjectURL(blob);
         downloadLink.href = url;
-        downloadLink.download = `converted.${format}`;
+        downloadLink.download = `${file.name}.${format}`;
         downloadLink.style.display = "block";
         downloadLink.innerText = "Download Converted Image";
 
