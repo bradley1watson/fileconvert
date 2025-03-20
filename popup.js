@@ -60,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Get the selected format and quality
         const format = formatSelect.value;
-        const quality = parseFloat(qualityInput.value);
 
         // Show loading spinner
         loadingSpinner.style.display = "block";
