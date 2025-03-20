@@ -10,32 +10,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load saved user preferences
     formatSelect.value = localStorage.getItem("format") || "png";
+    qualityInput.value = localStorage.getItem("quality") || "1";
 
     // Save user preferences when changed
-    formatSelect.addEventListener("change", () => {
+    function handleFormatChange() {
         localStorage.setItem("format", formatSelect.value);
-    });
+    }
+    formatSelect.addEventListener("change", handleFormatChange);
+
+    function handleQualityChange() {
+        localStorage.setItem("quality", qualityInput.value);
+    }
+    qualityInput.addEventListener("input", handleQualityChange);
 
     // Drag & Drop Support
-    dropZone.addEventListener("dragover", (event) => {
+    function handleDragOver(event) {
         event.preventDefault();
         dropZone.style.backgroundColor = "#eee"; // Highlight drop area
-    });
+    }
+    dropZone.addEventListener("dragover", handleDragOver);
 
-    dropZone.addEventListener("dragleave", () => {
+    function handleDragLeave() {
         dropZone.style.backgroundColor = "white";
-    });
+    }
+    dropZone.addEventListener("dragleave", handleDragLeave);
 
-    dropZone.addEventListener("drop", (event) => {
+    function handleDrop(event) {
         event.preventDefault();
         dropZone.style.backgroundColor = "white";
         fileInput.files = event.dataTransfer.files; // Assign to file input
-    });
+    }
+    dropZone.addEventListener("drop", handleDrop);
 
     // On click of drop zone, trigger file input click
-    dropZone.addEventListener("click", () => {
+    function handleDropZoneClick() {
         fileInput.click();
-    });
+    }
+    dropZone.addEventListener("click", handleDropZoneClick);
 
     // Handle Convert Button Click
     convertButton.addEventListener("click", function (event) {
@@ -79,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         createDownloadLink(blob, format);
                     },
                     `image/${format}`,
-                    quality
+                    qualityInput.value
                 );
             };
         };
