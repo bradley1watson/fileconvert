@@ -10,18 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load saved user preferences
     formatSelect.value = localStorage.getItem("format") || "png";
-    qualityInput.value = localStorage.getItem("quality") || "1";
 
     // Save user preferences when changed
     function handleFormatChange() {
         localStorage.setItem("format", formatSelect.value);
     }
     formatSelect.addEventListener("change", handleFormatChange);
-
-    function handleQualityChange() {
-        localStorage.setItem("quality", qualityInput.value);
-    }
-    qualityInput.addEventListener("input", handleQualityChange);
 
     // Drag & Drop Support
     function handleDragOver(event) {
