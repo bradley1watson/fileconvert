@@ -50,16 +50,9 @@ right: 0;
   display: block;
 }
 
-#drop-zone {
-  border: 2px dashed #1b75bc;
-  padding: 20px;
-  text-align: center;
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
 #drop-zone:hover {
   background-color: #f0f0f0;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 #loading-spinner {
@@ -68,4 +61,34 @@ right: 0;
   font-weight: bold;
   text-align: center;
   margin-top: 10px;
+}
+
+h2 {
+  display: inline-flex;
+  font-family: 
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+img {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
