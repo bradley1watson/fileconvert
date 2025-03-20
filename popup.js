@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const convertButton = document.getElementById("convert");
     const fileInput = document.getElementById("fileInput");
     const formatSelect = document.getElementById("format");
-    const qualityInput = document.getElementById("quality");
     const downloadLink = document.getElementById("download");
     const dropZone = document.getElementById("drop-zone");
     const loadingSpinner = document.getElementById("loading-spinner");
@@ -58,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Get the selected format and quality
+        // Get the selected format
         const format = formatSelect.value;
 
         // Show loading spinner
@@ -83,8 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     (blob) => {
                         createDownloadLink(blob, format);
                     },
-                    `image/${format}`,
-                    qualityInput.value
+                    `image/${format}`
                 );
             };
         };
